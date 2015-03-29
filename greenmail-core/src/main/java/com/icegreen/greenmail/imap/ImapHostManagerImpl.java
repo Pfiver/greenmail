@@ -64,9 +64,11 @@ public class ImapHostManagerImpl
         return checkViewable(folder);
     }
 
-    public MailFolder getFolder(GreenMailUser user, String mailboxName, boolean mustExist)
+    public MailFolder getFolder(String mailboxName, boolean mustExist)
             throws FolderException {
-        MailFolder folder = getFolder(user, mailboxName);
+        String name = getQualifiedMailboxName(mailboxName);
+        MailFolder folder = store.getMailbox(name);
+        folder = checkViewable(folder);
         if (mustExist && (folder == null)) {
             throw new FolderException("No such store.");
         }
@@ -90,7 +92,7 @@ public class ImapHostManagerImpl
      */
     public void createPrivateMailAccount(GreenMailUser user) throws FolderException {
         MailFolder root = store.getMailbox(USER_NAMESPACE);
-        MailFolder userRoot = store.createMailbox(root, user.getQualifiedMailboxName(), false);
+        MailFolder userRoot = store.createMailbox(root, user.getQualifiedMailboxName(), true);
         store.createMailbox(userRoot, INBOX_NAME, true);
     }
 
@@ -138,7 +140,7 @@ public class ImapHostManagerImpl
      */
     public void deleteMailbox(GreenMailUser user, String mailboxName)
             throws FolderException, AuthorizationException {
-        MailFolder toDelete = getFolder(user, mailboxName, true);
+        MailFolder toDelete = getFolder(mailboxName, true);
         if (store.getChildren(toDelete).isEmpty()) {
             toDelete.deleteAllMessages();
             toDelete.signalDeletion();
@@ -161,7 +163,7 @@ public class ImapHostManagerImpl
                               String newMailboxName)
             throws FolderException, AuthorizationException {
 
-        MailFolder existingFolder = getFolder(user, oldMailboxName, true);
+        MailFolder existingFolder = getFolder(oldMailboxName, true);
 
         // TODO: check permissions.
 
@@ -215,7 +217,7 @@ public class ImapHostManagerImpl
 //                            " pattern:'" + mailboxPattern + "'" );
 
         List<MailFolder> mailboxes = new ArrayList<MailFolder>();
-        String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
+        String qualifiedPattern = getQualifiedMailboxName(mailboxPattern);
 
         for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {
             // TODO check subscriptions.
@@ -228,8 +230,8 @@ public class ImapHostManagerImpl
             folder = checkViewable(folder);
 
             if (folder != null) {
-                mailboxes.add(folder);
-            }
+            mailboxes.add(folder);
+        }
         }
 
         return mailboxes;
@@ -240,7 +242,7 @@ public class ImapHostManagerImpl
      */
     public void subscribe(GreenMailUser user, String mailboxName)
             throws FolderException {
-        MailFolder folder = getFolder(user, mailboxName, true);
+        MailFolder folder = getFolder(mailboxName, true);
         subscriptions.subscribe(user, folder);
     }
 
@@ -249,8 +251,12 @@ public class ImapHostManagerImpl
      */
     public void unsubscribe(GreenMailUser user, String mailboxName)
             throws FolderException {
-        MailFolder folder = getFolder(user, mailboxName, true);
+        MailFolder folder = getFolder(mailboxName, true);
         subscriptions.unsubscribe(user, folder);
+    }
+
+    private String getQualifiedMailboxName(String mailboxName) {
+        return USER_NAMESPACE + HIERARCHY_DELIMITER + mailboxName;
     }
 
     /**
@@ -276,10 +282,9 @@ public class ImapHostManagerImpl
             return mailboxName;
         } else {
             if (mailboxName.length() == 0) {
-                return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace;
+                return getQualifiedMailboxName(userNamespace);
             } else {
-                return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace +
-                        HIERARCHY_DELIMITER + mailboxName;
+                return getQualifiedMailboxName(userNamespace) + HIERARCHY_DELIMITER + mailboxName;
             }
         }
     }

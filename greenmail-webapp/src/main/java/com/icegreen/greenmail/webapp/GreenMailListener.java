@@ -4,12 +4,17 @@ import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.Service;
+import com.icegreen.greenmail.webapp.Configuration.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +54,20 @@ public class GreenMailListener implements ServletContextListener {
         for (Service s : services) {
             log.info("Starting GreenMail service: " + s.toString());
             s.startService(null);
+        }
+
+        try {
+            File hc = File.createTempFile("hupa-config", ".properties");
+            BufferedWriter hcOut = new BufferedWriter(new FileWriter(hc));
+            for (ServiceConfiguration sc : configuration.getServiceConfigurations()) {
+                hcOut.write(sc.protocol.name() + "ServerAddress = " + sc.hostname + "\n");
+                hcOut.write(sc.protocol.name() + "ServerPort = " + sc.port + "\n");
+            }
+            hcOut.close();
+            System.setProperty("hupa.config.file", hc.getAbsolutePath());
+        }
+        catch (IOException ignore) {
+            ignore.printStackTrace();
         }
     }
 

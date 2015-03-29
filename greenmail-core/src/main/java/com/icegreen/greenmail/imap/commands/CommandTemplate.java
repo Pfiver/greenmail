@@ -110,7 +110,7 @@ abstract class CommandTemplate
                                     ImapSession session,
                                     boolean mustExist)
             throws FolderException {
-        return session.getHost().getFolder(session.getUser(), mailboxName, mustExist);
+        return session.getHost().getFolder(mailboxName, mustExist);
     }
 
     public CommandParser getParser() {

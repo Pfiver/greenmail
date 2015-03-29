@@ -92,9 +92,7 @@ class ListCommand extends AuthenticatedStateCommand {
             mailboxes = doList(session, searchPattern);
         }
 
-        String personalNamespace = USER_NAMESPACE + HIERARCHY_DELIMITER_CHAR +
-                session.getUser().getQualifiedMailboxName();
-        int prefixLength = personalNamespace.length();
+        int prefixLength = USER_NAMESPACE.length();
 
         for (final Object mailboxe : mailboxes) {
             MailFolder folder = (MailFolder) mailboxe;

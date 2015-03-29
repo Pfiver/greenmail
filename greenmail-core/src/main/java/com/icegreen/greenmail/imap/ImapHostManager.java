@@ -61,15 +61,13 @@ public interface ImapHostManager {
      * least lookup rights. If mustExist == false, simply returns <code>null</code> in
      * this case.
      *
-     * @param user        User making the request.
      * @param mailboxName String name of the target.
      * @param mustExist   Specified behaviour where a mailbox is missing or non-viewable.
      * @return an Mailbox reference.
      * @throws com.icegreen.greenmail.store.FolderException
      *          if mailbox does not exist locally, and mustExist is true.
      */
-    MailFolder getFolder(GreenMailUser user, String mailboxName, boolean mustExist)
-            throws FolderException;
+    MailFolder getFolder(String mailboxName, boolean mustExist) throws FolderException;
 
     /**
      * Returns a reference to the user's INBOX. The user must have been

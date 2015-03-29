@@ -89,7 +89,7 @@ public class UserImpl implements GreenMailUser, Serializable {
     }
 
     public String getQualifiedMailboxName() {
-        return String.valueOf(email.hashCode());
+        return email;
     }
 
     public int hashCode() {
