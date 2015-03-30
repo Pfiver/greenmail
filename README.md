@@ -1,6 +1,16 @@
 GreenMail
 =========
 
+Mods by Pfiver
+--------------
+This version brings seemless interoperability to [Apache James Hupa](http://james.apache.org/hupa/index.html) by
+automatically writing a config file and setting a system property that HUPA will pick up. The released version
+of Hupa is really old. Better use the 0.0.5-SNAPSHOT build that can be downloaded [from the integration server](
+https://builds.apache.org/job/hupa-trunk/lastSuccessfulBuild/org.apache.james.hupa$hupa/).
+
+GreenMail
+---------
+
 [GreenMail][greenmail_project_site] is an open source, intuitive and easy-to-use test suite of email servers for testing purposes. 
 Supports SMTP, POP3, IMAP with SSL socket support. GreenMail also provides a JBoss GreenMail Service.
 GreenMail is the fist and only library that offers a test framework for both receiving and retrieving emails from Java.

@@ -9,6 +9,7 @@ package com.icegreen.greenmail.user;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.InMemoryStore;
 
 import javax.mail.internet.MimeMessage;
 import java.io.Serializable;
@@ -89,7 +90,7 @@ public class UserImpl implements GreenMailUser, Serializable {
     }
 
     public String getQualifiedMailboxName() {
-        return email;
+        return email.replace(String.valueOf(InMemoryStore.HIERARCHY_DELIMITER_CHAR), "_");
     }
 
     public int hashCode() {
